@@ -1,0 +1,1 @@
+Server is implemented in Visual studio 2025, tcp recieve data from esp32s3 and dump into .bin file.
