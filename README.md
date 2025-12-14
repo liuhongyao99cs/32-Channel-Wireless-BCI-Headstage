@@ -3,6 +3,12 @@ This is a 32-channel wireless headstage for BCI signal which is composed of INTA
 
 ### The repository contains necessary code and PCB files to create a wireless headstage.
 
+### Code structure:
+We implement two modules in FPGA:
+1. Driver for INTAN RHD 2132 chip (We test sample rate up to 35*20K samples/s)
+2. SPI interface with ESP32S3
+
+
 ## Physical Specifications
 
 - **Weight:** 7.34 grams
