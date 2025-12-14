@@ -1,0 +1,5 @@
+FPGA code contains:
+
+1. A FPGA-Verilog version driver for INTAN RHD 2132 chip (https://intantech.com/products_RHD2000.html).
+2. A clock ip kernel to generate clock with higher freq: 12 MHz system clk -> 16 MHz INTAN clk and 80 MHz SPI clk
+3. A SPI slave in FPGA
