@@ -1,0 +1,12 @@
+#ifndef SPI_INTERFACE_H
+#define SPI_INTERFACE_H
+
+////////////////////////////////////////////////////////////////
+
+bool initSPI();
+void recvFromSPI(char*, int);
+void SendToSPI(uint8_t *, uint8_t*);
+
+////////////////////////////////////////////////////////////////
+
+#endif /* SPI_INTERFACE_H */
