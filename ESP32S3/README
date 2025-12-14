@@ -1,0 +1,5 @@
+ESP32S3 works as radio layer and contains:
+
+1. A SPI-DMA master, which recieves data from CmodA7.
+2. WiFi-TCP to send data to server
+3. WiFi run on core 0 while SPI dma runs on cpu 1.
