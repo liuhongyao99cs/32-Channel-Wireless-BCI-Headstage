@@ -9,9 +9,11 @@ We implement two modules in FPGA:
 2. SPI interface with ESP32S3
 
 
-## Physical Specifications
+### Physical Specifications
 
 - **Weight:** 7.34 grams
 - **Dimensions:** 23.5 x 18 x 22 mm
 - **Connector:** Omnetics 2250
 - **Sampling speed:** 32 channels at 30KHz (16 bits)
+
+### Recording demo
