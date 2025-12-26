@@ -28,4 +28,4 @@ We implement two modules in FPGA:
 
 3. Run Visual Studio to open recording server:
 
-The server side should work like this: [demo video](/Images/headstage_demo.mp4)
+The server side should work like this: [demo video](https://github.com/user-attachments/assets/bdcc9122-dd06-4ffc-8f9a-855f3d923cfa)
