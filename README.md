@@ -17,3 +17,15 @@ We implement two modules in FPGA:
 - **Sampling speed:** 32 channels at 30KHz (16 bits)
 
 ### Recording demo
+
+#### How to program the headstage
+1. Run verilog file in Cmod A7 fold with Vivado 2025.2 (or later version):
+   ```bash
+   program the bitstream file into the FPGA layer.
+   
+2. Run esp-idf extention in vscode to program ESP32S3:
+   
+
+3. Run Visual Studio to open recording server:
+
+The server side should work like this: [demo video](/Images/headstage_demo.mp4)
