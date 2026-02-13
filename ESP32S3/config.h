@@ -17,12 +17,12 @@
 
 ////////////////////////////////////////////////////////////////
 
-#define WIFI_SSID         "WW_Range_2.4G" //"TP-LINK_60CA"
-#define WIFI_PASSWORD     "zbcyhglyt123"
+#define WIFI_SSID         "TP-LINK_60CA" //"TP-Link_772E" //"WW_Range_2.4G" //"TP-LINK_60CA"
+#define WIFI_PASSWORD     "8308037lhy"// "mmwcs3420"//"8308037lhy" //"zbcyhglyt123"
 
 ////////////////////////////////////////////////////////////////
 
-#define TCP_SERVER_IP     "192.168.1.105"
+#define TCP_SERVER_IP     "192.168.1.101"
 #define TCP_SERVER_PORT   2000
 
 ////////////////////////////////////////////////////////////////

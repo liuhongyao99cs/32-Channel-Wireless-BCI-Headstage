@@ -11,7 +11,7 @@
 #include "tcp.h"
 ///////////////////////////////////////////////////////////
 
-const int SPI_FRAME_BITLEN = 32*8*20 + 56;
+const int SPI_FRAME_BITLEN = 32*8*20 + 16;
 const int SPI_FRAME_SIZE = SPI_FRAME_BITLEN/8;
 const int WIFI_FRAME = 20; // 16 spi frames forms a spi frame
 const int WIFI_LEN = 4096*2;
@@ -130,61 +130,41 @@ void wifiTask()
     uint8_t prev_id = 0;
     uint8_t err = 0;
     //uint8_t id_arr[N] = {0};
-    for (int j=0;j<N;j++) {
-    //while (true) {
+    //for (int j=0;j<N;j++) {
+    int j = 0;
+    while (true) {
+        // 1. 等待 SPI 接收完成信号
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
         
-        //int buf_offset = (j % WIFI_FRAME) * SPI_FRAME_SIZE;
+        // 2. 交换指针拿到数据，并立刻通知 SPI 任务继续采集下一帧
+        // 尽早 Give 信号可以减少 SPI 任务的等待时间，提高吞吐量
         swap(&spi_buf, &wifi_buf);
-        //memcpy(send_buf + buf_offset, spi_buf, SPI_FRAME_SIZE);
-        //memcpy(wifi_buf,spi_buf,SPI_FRAME_SIZE);
-        //printf("\n");
         xTaskNotifyGive(h_spi_task);
         
-        //int buf_offset = (j % WIFI_FRAME) * SPI_FRAME_SIZE;
-        
-
-        if (j > 0 && j %(WIFI_FRAME-1) == 0) {
-            // 确保 sendToTcp 是阻塞的，或者使用双缓冲 (Double Buffering) 避免数据竞争
-            sendToTcp(send_buf, SPI_FRAME_SIZE*WIFI_FRAME);
-
-            //for (int k=0;k<10;k++){
-            //    printf("%d ",send_buf[k]);
-            //}
-            //printf("\n");
-            
-       }
-       int buf_offset = (j % WIFI_FRAME) * SPI_FRAME_SIZE;
+        // 3. 将刚刚拿到的 wifi_buf 数据复制到 send_buf 的对应位置
+        // 此时 j 代表当前是第几个包 (从0开始)
+        int buf_offset = j * SPI_FRAME_SIZE;
         memcpy(send_buf + buf_offset, wifi_buf, SPI_FRAME_SIZE);
         
-        //uint8_t spi_frame_id = wifi_buf[0];
-        //id_arr[j] = wifi_buf[0];
-        //if ( spi_frame_id - prev_id != 1 ||  spi_frame_id - prev_id != -255)
-         //   err++;
-        //uint16_t spi_bit_len = (wifi_buf[2])<<8|wifi_buf[3];
-        //printf("frame id: %d \n",spi_frame_id);
-
-        //printf("Frame id: %d seq id: %d last byte1: %02X last byte2: %02X last byte3: %02X last byte4: %02X LAST BYTE5 %02X\n",wifi_buf[0],wifi_buf[1],wifi_buf[5],wifi_buf[6],wifi_buf[100],wifi_buf[101],wifi_buf[102]);
-        /*if (j >= 1){
-            if (last_seq == wifi_buf[0]) {
-                n_repeat++;
-            } else if ((uint8_t)(last_seq+1) != wifi_buf[0]) {
-                n_seq_err++;
-            }
-            for (int i = 1; i < SPI_FRAME_SIZE; i++) {
-                if (wifi_buf[i] != wifi_buf[i-1]) {
-                    n_data_err++;
-                    break;
-                }
-            }
-        }*/
-        //printf("seq id: %d \n",(int)wifi_buf[0]);
-        //last_seq = wifi_buf[0];
+        // 4. 计数器 + 1
+        j++;
         
+        // 5. 判断是否收集满了 WIFI_FRAME 个包
+        if (j >= WIFI_FRAME) {
+            
+            // 满了，发送整个大包
+            sendToTcp(send_buf, SPI_FRAME_SIZE * WIFI_FRAME);
+            
+            // 调试打印 (可选)
+            // printf("Sent %d frames to TCP\n", j);
+
+            // 6. 重置计数器，准备收集下一轮
+            j = 0;
+        }
     }
     uint64_t end = esp_timer_get_time();
-    printf("\n");
-    printf("bit rate  = %.2f Mbps\n", (double)(N*SPI_FRAME_BITLEN)/(end-start));
+    //printf("\n");
+    //printf("bit rate  = %.2f Mbps\n", (double)(N*SPI_FRAME_BITLEN)/(end-start));
     //for ( int i=0;i<SPI_FRAME_BITLEN/8;i++)
     //    printf("byte  = %d\n", wifi_buf[i]);
     /*printf("Running time: %.4f\n",(double)(end-start)*1e-6);
@@ -227,8 +207,8 @@ void spiTask()
 {
     
     
-    for (int i=0;i<N;i++) {
-    //while ( true ){
+    //for (int i=0;i<N;i++) {
+    while ( true ){
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
         recvFromSPI(spi_buf,SPI_FRAME_SIZE); 
         xTaskNotifyGive(h_wifi_task);
