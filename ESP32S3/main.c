@@ -72,7 +72,7 @@ void app_main(void)
     }
     */
 
-    // wifi vairation 
+    // wifi variation 
     // for ( int i=0; i < WIFI_LEN; i = i + 1){
     //    send_buf[i] = 12;
     //}
@@ -133,32 +133,32 @@ void wifiTask()
     //for (int j=0;j<N;j++) {
     int j = 0;
     while (true) {
-        // 1. 等待 SPI 接收完成信号
+        // 1. Wait for SPI reception completion signal
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
         
-        // 2. 交换指针拿到数据，并立刻通知 SPI 任务继续采集下一帧
-        // 尽早 Give 信号可以减少 SPI 任务的等待时间，提高吞吐量
+        // 2. Swap pointers to retrieve data, and immediately notify the SPI task to continue collecting the next frame
+        // Giving the signal early reduces the SPI task's wait time and improves throughput
         swap(&spi_buf, &wifi_buf);
         xTaskNotifyGive(h_spi_task);
         
-        // 3. 将刚刚拿到的 wifi_buf 数据复制到 send_buf 的对应位置
-        // 此时 j 代表当前是第几个包 (从0开始)
+        // 3. Copy the received wifi_buf data to the corresponding position in send_buf
+        // Here, j represents the current packet index (starting from 0)
         int buf_offset = j * SPI_FRAME_SIZE;
         memcpy(send_buf + buf_offset, wifi_buf, SPI_FRAME_SIZE);
         
-        // 4. 计数器 + 1
+        // 4. Increment counter
         j++;
         
-        // 5. 判断是否收集满了 WIFI_FRAME 个包
+        // 5. Check if WIFI_FRAME packets have been collected
         if (j >= WIFI_FRAME) {
             
-            // 满了，发送整个大包
+            // Full, send the entire large packet
             sendToTcp(send_buf, SPI_FRAME_SIZE * WIFI_FRAME);
             
-            // 调试打印 (可选)
+            // Debug print (optional)
             // printf("Sent %d frames to TCP\n", j);
 
-            // 6. 重置计数器，准备收集下一轮
+            // 6. Reset counter, prepare for the next round of collection
             j = 0;
         }
     }
@@ -218,4 +218,3 @@ void spiTask()
          vTaskDelay(500/portTICK_PERIOD_MS);
     }
 }
-
