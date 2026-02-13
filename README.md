@@ -1,4 +1,4 @@
-# 32-Channel-Wireless-BCI-Headstage
+# 32-Channel low-power FPGA based Wireless BCI Headstage
 This is a 32-channel wireless headstage for BCI signal which is composed of INTAN RHD 2132, Cmod A7 FPGA controller and ESP32-S3 as radio layer.
 
 ### The repository contains necessary code and PCB files to create a wireless headstage.
